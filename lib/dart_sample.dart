@@ -6,11 +6,14 @@ import 'package:yaml/yaml.dart';
 import 'package:github/server.dart';
 import 'package:gist/dart_sample.dart';
 import 'package:gist/github.dart';
+import 'package:path/path.dart' as path;
 
 class DartSample {
   final Directory _dir;
 
   final List<File> _allFiles;
+
+  String get _dirName => path.basename(_dir.path);
 
   DartSample(Directory dir)
       : this._dir = dir,
@@ -32,14 +35,14 @@ class DartSample {
       homepage.substring(homepage.lastIndexOf('/') + 1);
 
   _createGist() async {
-    Gist gist = await gitHub.gists.createGist(_getFiles(), public: true);
+    Gist gist = await gitHub.gists.createGist(_getFiles(), description: _dirName, public: true);
     print('Gist created at ${gist.htmlUrl}');
     _writeGistUrlToPubspec(gist);
 
   }
 
   _updateGist(String id) async {
-    Gist gist = await gitHub.gists.editGist(id, files: _getFiles());
+    Gist gist = await gitHub.gists.editGist(id, description: _dirName, files: _getFiles());
     print('Gist updated at ${gist.htmlUrl}');
   }
 
