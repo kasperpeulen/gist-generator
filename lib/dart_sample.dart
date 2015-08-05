@@ -25,12 +25,12 @@ class DartSample {
     String pubspec = new File('${_dir.path}/pubspec.yaml').readAsStringSync();
     Map yaml = loadYaml(pubspec);
     String homepage = yaml['homepage'];
-    String description = yaml['description'];
-    if (description != null) {
-      this.description = description;
-    } else {
+//    String description = yaml['description'];
+//    if (description != null) {
+//      this.description = description;
+//    } else {
       this.description = _dirName;
-    }
+//    }
     if (homepage == null) {
       await _createGist();
     } else {
