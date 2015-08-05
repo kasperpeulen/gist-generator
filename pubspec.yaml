@@ -2,7 +2,7 @@ name: gist
 author: Kasper Peulen <kasperpeulen@gmail.com>
 description: |
   Create and edit gist from the command line.
-version: 0.0.1
+version: 0.0.2
 environment:
   sdk: '>=1.12.0-dev.4.0 <2.0.0'
 executables:
