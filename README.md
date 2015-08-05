@@ -1,5 +1,12 @@
 # gist-generator
+
 Create gists from the command line.
+
+To activate the executable `gist`:
+
+```
+pub global activate --source git https://github.com/kasperpeulen/gist-generator
+```
 
 `gist generate` will try to create gists from all directories in the project. Here is an example of how such a project may look:
 https://github.com/kasperpeulen/dartpads
