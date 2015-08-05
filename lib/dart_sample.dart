@@ -36,14 +36,14 @@ class DartSample {
 
   _createGist() async {
     Gist gist = await gitHub.gists.createGist(_getFiles(), description: _dirName, public: true);
-    print('Gist created at ${gist.htmlUrl}');
+    print('"$_dirName" gist created at ${gist.htmlUrl}');
     _writeGistUrlToPubspec(gist);
 
   }
 
   _updateGist(String id) async {
     Gist gist = await gitHub.gists.editGist(id, description: _dirName, files: _getFiles());
-    print('Gist updated at ${gist.htmlUrl}');
+    print('"$_dirName" gist updated at ${gist.htmlUrl}');
   }
 
   void _writeGistUrlToPubspec(Gist gist) {
