@@ -15,6 +15,8 @@ class DartSample {
 
   String get _dirName => path.basename(_dir.path);
 
+  String description;
+
   DartSample(Directory dir)
       : this._dir = dir,
         _allFiles = dir.listSync(recursive: true)
@@ -24,6 +26,12 @@ class DartSample {
     String pubspec = new File('${_dir.path}/pubspec.yaml').readAsStringSync();
     Map yaml = loadYaml(pubspec);
     String homepage = yaml['homepage'];
+    String description = yaml['description'];
+    if (description != null) {
+      this.description = description;
+    } else {
+      description = _dirName;
+    }
     if (homepage == null) {
       await _createGist();
     } else {
@@ -35,14 +43,14 @@ class DartSample {
       homepage.substring(homepage.lastIndexOf('/') + 1);
 
   _createGist() async {
-    Gist gist = await gitHub.gists.createGist(_getFiles(), description: _dirName, public: true);
+    Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: true);
     print('"$_dirName" gist created at ${gist.htmlUrl}');
     _writeGistUrlToPubspec(gist);
 
   }
 
   _updateGist(String id) async {
-    Gist gist = await gitHub.gists.editGist(id, description: _dirName, files: _getFiles());
+    Gist gist = await gitHub.gists.editGist(id, description: description, files: _getFiles());
     print('"$_dirName" gist updated at ${gist.htmlUrl}');
   }
 
