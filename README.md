@@ -5,4 +5,4 @@ Create gists from the command line.
 https://github.com/kasperpeulen/dartpads
 
 Only the directories that are "dartpadable" will be converted to gists. 
-This means that the directory contains a `web` directory. And that files in this directory can only be named `index.html,main.dart` or `styles.css`.
+This means that the directory contains a `web` directory. And that files in this directory can only be named `index.html`, `main.dart` or `styles.css`.
