@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:yaml/yaml.dart';
 import 'package:github/server.dart';
-import 'package:gist/dart_sample.dart';
 import 'package:gist/github.dart';
 import 'package:path/path.dart' as path;
 
@@ -30,7 +29,7 @@ class DartSample {
     if (description != null) {
       this.description = description;
     } else {
-      description = _dirName;
+      this.description = _dirName;
     }
     if (homepage == null) {
       await _createGist();
