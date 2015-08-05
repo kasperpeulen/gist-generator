@@ -1,7 +1,7 @@
 # gist-generator
 Create gists from the command line.
 
-`gist generate` will create gist from all directories in the project. Here is an example of how such a project may look:
+`gist generate` will try to create gists from all directories in the project. Here is an example of how such a project may look:
 https://github.com/kasperpeulen/dartpads
 
 Only the directories that are "dartpadable" will be converted to gists. 
