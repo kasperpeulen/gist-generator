@@ -19,7 +19,6 @@ class Generate extends Command {
   String description = 'Generate gists from the current directory.';
 
   Generate() {
-    // 47c3e85304aa0b7eb6ad050ed82000c17a5d7b09
     String token = askSync('Github Token:');
     Authentication auth = new Authentication.withToken(token);
     gitHub = createGitHubClient(auth: auth);
