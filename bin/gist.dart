@@ -6,6 +6,7 @@ import 'package:prompt/prompt.dart';
 import 'package:gist/dart_sample.dart';
 import 'package:gist/github.dart';
 import 'package:gist/analyzer.dart';
+import 'package:path/path.dart' as path;
 
 void main(List<String> arguments) {
   new CommandRunner('gist', 'Gist manager.')
@@ -39,6 +40,7 @@ class Generate extends Command {
   }
 
   bool _isDartpadAble(Directory dir) {
+    String dirName = path.basename(dir.path);
     var children = dir.listSync(recursive: true);
     Directory web = children.firstWhere(
         (entity) => entity is Directory && entity.path.endsWith('web'),
@@ -50,7 +52,10 @@ class Generate extends Command {
       ..retainWhere((e) => e is File);
 
     // not dartpadable if there are more than 3 files
-    if (files.length > 3) return false;
+    if (files.length > 3) {
+      print("Skipping ${dirName}: Too many files.");
+      return false;
+    }
 
     // files can only have the name index.html/main.dart/styles.css
     if (!files.every((file) {
@@ -59,6 +64,7 @@ class Generate extends Command {
           path.endsWith('main.dart') ||
           path.endsWith('styles.css');
     })) {
+      print("Skipping ${dirName}: Files can only have the name index.html/main.dart/styles.css.");
       return false;
     }
 
@@ -68,9 +74,11 @@ class Generate extends Command {
       var analyzer = new AnalyzerUtil();
       List<String> libraries = analyzer.findLibraries(dartFile.readAsStringSync());
       if (libraries.any((l) => l == 'dart:io')) {
+        print("Skipping ${dirName}: Dartpads can't import dart:io.");
         return false;
       }
       if (libraries.any((l) => ! l.startsWith('dart:'))) {
+        print("Skipping ${dirName}: Dartpads can't import packages.");
         return false;
       }
     }
@@ -78,4 +86,6 @@ class Generate extends Command {
     // otherwise dartpadable, yeah :)
     return true;
   }
+
+
 }
