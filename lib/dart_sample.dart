@@ -16,7 +16,7 @@ class DartSample {
     if (_dir.path == '.') {
       return path.basename(Uri.base.path);
     }
-    return path.basename(_dir.path);
+    return path.relative(_dir.path);
   }
 
   String description;

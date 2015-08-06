@@ -19,7 +19,11 @@ class Generate extends Command {
 
   String description = 'Generate gists from the current directory.';
 
+  bool get debug => argResults['debug'];
+
   Generate() {
+
+    argParser.addFlag("debug", abbr: 'd', help: "Show all the skipping messages.");
     String token = askSync('Create a github token here:\n'
         'https://github.com/settings/tokens\n'
         'Github Token:');
@@ -28,8 +32,8 @@ class Generate extends Command {
   }
 
   run() async {
-    var root = new Directory('.');
-    var allDirectories = root.listSync()..retainWhere((entity) => entity is Directory);
+    Directory root = new Directory('.');
+    List<Directory> allDirectories = root.listSync(recursive: true)..retainWhere((entity) => entity is Directory);
 
     bool pubspecInRoot = new File('./pubspec.yaml').existsSync();
 
@@ -55,19 +59,35 @@ class Generate extends Command {
   }
 
   bool _isDartpadAble(Directory dir) {
-    String dirName = path.basename(dir.path);
+    String dirName = path.relative(dir.path);
     if (dirName == '.') {
       dirName = path.basename(Uri.base.path);
     }
+
     var children = dir.listSync(recursive: true);
     Directory web =
         children.firstWhere((entity) => entity is Directory && entity.path.endsWith('web'), orElse: () => null);
 
     // not dartpadable if there is no web dir
     if (web == null) {
-      print('Skipping ${dirName}: App contains no web directory.');
+      if (dirName.startsWith('.')) {
+        //don't show print message for hidden folders
+      }
+      else {
+        if (debug) {
+          print('Skipping ${dirName}: App contains no web directory.');
+        }
+      }
       return false;
     }
+
+    if (! new File('$dirName/pubspec.yaml').existsSync()) {
+      if (debug) {
+        print('Skipping ${dirName}: App contains no pubspec.yaml file.');
+      }
+      return false;
+    }
+
     List<File> files = web.listSync(recursive: true)..retainWhere((e) => e is File);
 
     // not dartpadable if there are more than 3 files
