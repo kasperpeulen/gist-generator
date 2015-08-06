@@ -19,19 +19,18 @@ class Generate extends Command {
 
   String description = 'Generate gists from the current directory.';
 
-  bool get debug => argResults['debug'];
+  bool get verbose => argResults['verbose'];
+  bool get dry_run => argResults['dry-run'];
 
   Generate() {
-
-    argParser.addFlag("debug", abbr: 'd', help: "Show all the skipping messages.");
-    String token = askSync('Create a github token here:\n'
-        'https://github.com/settings/tokens\n'
-        'Github Token:');
-    Authentication auth = new Authentication.withToken(token);
-    gitHub = createGitHubClient(auth: auth);
+    argParser.addFlag("verbose", abbr: 'v');
+    argParser.addFlag("dry-run", abbr: 'n');
   }
 
   run() async {
+
+    setupGitHub();
+
     Directory root = new Directory('.');
     List<Directory> allDirectories = root.listSync(recursive: true)..retainWhere((entity) => entity is Directory);
 
@@ -41,6 +40,9 @@ class Generate extends Command {
     if (pubspecInRoot) {
       if (_isDartpadAble(root)) {
         DartSample sample = new DartSample(root);
+
+        if (dry_run) exit(0);
+
         await sample.generateGist();
       }
     } else {
@@ -48,14 +50,25 @@ class Generate extends Command {
       // check if the project contains dartpadable directories
       var dartpadAbleSamples = allDirectories..retainWhere(_isDartpadAble);
 
+      if (dry_run) exit(0);
+
       for (Directory sampleDir in dartpadAbleSamples) {
         DartSample sample = new DartSample(sampleDir);
         await sample.generateGist();
       }
     }
 
-
     exit(0);
+  }
+
+  void setupGitHub() {
+    if (!dry_run) {
+      String token = askSync('Create a github token here:\n'
+          'https://github.com/settings/tokens\n'
+          'Github Token:');
+      Authentication auth = new Authentication.withToken(token);
+      gitHub = createGitHubClient(auth: auth);
+    }
   }
 
   bool _isDartpadAble(Directory dir) {
@@ -74,7 +87,7 @@ class Generate extends Command {
         //don't show print message for hidden folders
       }
       else {
-        if (debug) {
+        if (verbose) {
           print('Skipping ${dirName}: App contains no web directory.');
         }
       }
@@ -82,7 +95,7 @@ class Generate extends Command {
     }
 
     if (! new File('$dirName/pubspec.yaml').existsSync()) {
-      if (debug) {
+      if (verbose) {
         print('Skipping ${dirName}: App contains no pubspec.yaml file.');
       }
       return false;
@@ -118,6 +131,10 @@ class Generate extends Command {
         print("Skipping ${dirName}: Dartpads can't import packages.");
         return false;
       }
+    }
+
+    if (dry_run) {
+      print('$dirName is dartpadable');
     }
 
     // otherwise dartpadable, yeah :)
