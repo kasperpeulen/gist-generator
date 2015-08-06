@@ -132,11 +132,11 @@ class Generate extends Command {
       var analyzer = new AnalyzerUtil();
       List<String> libraries = analyzer.findLibraries(dartFile.readAsStringSync());
       if (libraries.any((l) => l == 'dart:io')) {
-        print("Skipping ${printDirName}: Dartpads can't import dart:io.");
+        print("Skipping ${printDirName}: A DartPad can't import dart:io.");
         return false;
       }
       if (libraries.any((l) => !l.startsWith('dart:'))) {
-        print("Skipping ${printDirName}: Dartpads can't import packages.");
+        print("Skipping ${printDirName}: A DartPad can't import packages.");
         return false;
       }
     }
