@@ -31,33 +31,44 @@ class Generate extends Command {
     var root = new Directory('.');
     var allDirectories = root.listSync()..retainWhere((entity) => entity is Directory);
 
-    if (allDirectories.length == 1 && _isDartpadAble(root)) {
-      DartSample sample = new DartSample(root);
-      await sample.generateGist();
-      exit(0);
+    bool pubspecInRoot = new File('./pubspec.yaml').existsSync();
+
+    // Generate a gist from the root if a pubspec.yaml file is in the root
+    if (pubspecInRoot) {
+      if (_isDartpadAble(root)) {
+        DartSample sample = new DartSample(root);
+        await sample.generateGist();
+      }
+    } else {
+      // if there is no pubspec.yaml file in the root
+      // check if the project contains dartpadable directories
+      var dartpadAbleSamples = allDirectories..retainWhere(_isDartpadAble);
+
+      for (Directory sampleDir in dartpadAbleSamples) {
+        DartSample sample = new DartSample(sampleDir);
+        await sample.generateGist();
+      }
     }
 
-    var dartpadAbleSamples = allDirectories
-      ..retainWhere(_isDartpadAble);
 
-    for (Directory sampleDir in dartpadAbleSamples) {
-      DartSample sample = new DartSample(sampleDir);
-      await sample.generateGist();
-    }
     exit(0);
   }
 
   bool _isDartpadAble(Directory dir) {
     String dirName = path.basename(dir.path);
+    if (dirName == '.') {
+      dirName = path.basename(Uri.base.path);
+    }
     var children = dir.listSync(recursive: true);
-    Directory web = children.firstWhere(
-        (entity) => entity is Directory && entity.path.endsWith('web'),
-        orElse: () => null);
+    Directory web =
+        children.firstWhere((entity) => entity is Directory && entity.path.endsWith('web'), orElse: () => null);
 
     // not dartpadable if there is no web dir
-    if (web == null) return false;
-    List<File> files = web.listSync(recursive: true)
-      ..retainWhere((e) => e is File);
+    if (web == null) {
+      print('Skipping ${dirName}: App contains no web directory.');
+      return false;
+    }
+    List<File> files = web.listSync(recursive: true)..retainWhere((e) => e is File);
 
     // not dartpadable if there are more than 3 files
     if (files.length > 3) {
@@ -68,9 +79,7 @@ class Generate extends Command {
     // files can only have the name index.html/main.dart/styles.css
     if (!files.every((file) {
       var path = file.path;
-      return path.endsWith('index.html') ||
-          path.endsWith('main.dart') ||
-          path.endsWith('styles.css');
+      return path.endsWith('index.html') || path.endsWith('main.dart') || path.endsWith('styles.css');
     })) {
       print("Skipping ${dirName}: Files can only have the name index.html/main.dart/styles.css.");
       return false;
@@ -85,7 +94,7 @@ class Generate extends Command {
         print("Skipping ${dirName}: Dartpads can't import dart:io.");
         return false;
       }
-      if (libraries.any((l) => ! l.startsWith('dart:'))) {
+      if (libraries.any((l) => !l.startsWith('dart:'))) {
         print("Skipping ${dirName}: Dartpads can't import packages.");
         return false;
       }
@@ -94,6 +103,4 @@ class Generate extends Command {
     // otherwise dartpadable, yeah :)
     return true;
   }
-
-
 }
