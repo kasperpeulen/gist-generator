@@ -77,8 +77,12 @@ class Generate extends Command {
 
   bool _isDartpadAble(Directory dir) {
     String dirName = path.relative(dir.path);
+
+    String printDirName;
     if (dirName == '.') {
-      dirName = path.basename(Uri.base.path);
+      printDirName = path.basename(Uri.base.path);
+    } else {
+      printDirName = dirName;
     }
 
     var children = dir.listSync(recursive: true);
@@ -87,12 +91,12 @@ class Generate extends Command {
 
     // not dartpadable if there is no web dir
     if (web == null) {
-      if (dirName.startsWith('.')) {
+      if (printDirName.startsWith('.')) {
         //don't show print message for hidden folders
       }
       else {
         if (verbose) {
-          print('Skipping ${dirName}: App contains no web directory.');
+          print('Skipping ${printDirName}: App contains no web directory.');
         }
       }
       return false;
@@ -100,7 +104,7 @@ class Generate extends Command {
 
     if (! new File('$dirName/pubspec.yaml').existsSync()) {
       if (verbose) {
-        print('Skipping ${dirName}: App contains no pubspec.yaml file.');
+        print('Skipping ${printDirName}: App contains no pubspec.yaml file.');
       }
       return false;
     }
@@ -109,7 +113,7 @@ class Generate extends Command {
 
     // not dartpadable if there are more than 3 files
     if (files.length > 3) {
-      print("Skipping ${dirName}: Too many files.");
+      print("Skipping ${printDirName}: Too many files.");
       return false;
     }
 
@@ -118,7 +122,7 @@ class Generate extends Command {
       var path = file.path;
       return path.endsWith('index.html') || path.endsWith('main.dart') || path.endsWith('styles.css');
     })) {
-      print("Skipping ${dirName}: Files can only have the name index.html/main.dart/styles.css.");
+      print("Skipping ${printDirName}: Files can only have the name index.html/main.dart/styles.css.");
       return false;
     }
 
@@ -128,17 +132,17 @@ class Generate extends Command {
       var analyzer = new AnalyzerUtil();
       List<String> libraries = analyzer.findLibraries(dartFile.readAsStringSync());
       if (libraries.any((l) => l == 'dart:io')) {
-        print("Skipping ${dirName}: Dartpads can't import dart:io.");
+        print("Skipping ${printDirName}: Dartpads can't import dart:io.");
         return false;
       }
       if (libraries.any((l) => !l.startsWith('dart:'))) {
-        print("Skipping ${dirName}: Dartpads can't import packages.");
+        print("Skipping ${printDirName}: Dartpads can't import packages.");
         return false;
       }
     }
 
     if (dry_run) {
-      print('$dirName is dartpadable');
+      print('$printDirName is dartpadable');
     }
 
     // otherwise dartpadable, yeah :)
