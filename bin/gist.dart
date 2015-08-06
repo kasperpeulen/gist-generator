@@ -1,12 +1,12 @@
-import 'package:args/command_runner.dart';
-
 import 'dart:io';
-import 'package:github/server.dart';
-import 'package:prompt/prompt.dart';
+
+import 'package:args/command_runner.dart';
+import 'package:gist/analyzer.dart';
 import 'package:gist/dart_sample.dart';
 import 'package:gist/github.dart';
-import 'package:gist/analyzer.dart';
+import 'package:github/server.dart';
 import 'package:path/path.dart' as path;
+import 'package:prompt/prompt.dart';
 
 void main(List<String> arguments) {
   new CommandRunner('gist', 'Gist manager.')
@@ -28,8 +28,16 @@ class Generate extends Command {
   }
 
   run() async {
-    var dartpadAbleSamples = new Directory('').listSync()
-      ..retainWhere((dir) => dir is Directory)
+    var root = new Directory('.');
+    var allDirectories = root.listSync()..retainWhere((entity) => entity is Directory);
+
+    if (allDirectories.length == 1 && _isDartpadAble(root)) {
+      DartSample sample = new DartSample(root);
+      await sample.generateGist();
+      exit(0);
+    }
+
+    var dartpadAbleSamples = allDirectories
       ..retainWhere(_isDartpadAble);
 
     for (Directory sampleDir in dartpadAbleSamples) {

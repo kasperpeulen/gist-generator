@@ -12,7 +12,12 @@ class DartSample {
 
   final List<File> _allFiles;
 
-  String get _dirName => path.basename(_dir.path);
+  String get _dirName {
+    if (_dir.path == '.') {
+      return path.basename(Uri.base.path);
+    }
+    return path.basename(_dir.path);
+  }
 
   String description;
 
