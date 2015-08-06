@@ -93,8 +93,7 @@ class Generate extends Command {
     if (web == null) {
       if (printDirName.startsWith('.')) {
         //don't show print message for hidden folders
-      }
-      else {
+      } else {
         if (verbose) {
           print('Skipping ${printDirName}: App contains no web directory.');
         }

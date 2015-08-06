@@ -29,22 +29,22 @@ class DartSample {
   generateGist() async {
     String pubspec = new File('${_dir.path}/pubspec.yaml').readAsStringSync();
     Map yaml = loadYaml(pubspec);
-    String homepage = yaml['homepage'];
+    String gistUrl = yaml['gist'];
 //    String description = yaml['description'];
 //    if (description != null) {
 //      this.description = description;
 //    } else {
       this.description = _dirName;
 //    }
-    if (homepage == null) {
+    if (gistUrl == null) {
       await _createGist();
     } else {
-      await _updateGist(_getIdFromHomepage(homepage));
+      await _updateGist(_getIdFromHomepage(gistUrl));
     }
   }
 
-  String _getIdFromHomepage(String homepage) =>
-      homepage.substring(homepage.lastIndexOf('/') + 1);
+  String _getIdFromHomepage(String gistUrl) =>
+      gistUrl.substring(gistUrl.lastIndexOf('/') + 1);
 
   _createGist() async {
     Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: true);
@@ -62,10 +62,11 @@ class DartSample {
     File pubspecFile =
     _allFiles.firstWhere((file) => file.path.endsWith('pubspec.yaml'));
     String oldString = pubspecFile.readAsStringSync();
-    String homepage = 'http://gist.github.com/${gist.owner.login}/${gist.id}';
-    String newString = '$oldString\n' 'homepage: $homepage';
+    String gistUrl = 'https://gist.github.com/${gist.owner.login}/${gist.id}';
+    String dartpadUrl = 'https://dartpad.dartlang.org/${gist.id}';
+    String newString = '$oldString\n' 'gist: $gistUrl\n' 'dartpad: $dartpadUrl\n';
     pubspecFile.writeAsStringSync(newString);
-    print('Homepage inserted in pubspec.yaml');
+    print('Gist url and dartpad url inserted in pubspec.yaml.');
   }
 
   Map<String, String> _getFiles() {
