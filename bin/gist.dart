@@ -8,10 +8,14 @@ import 'package:github/server.dart';
 import 'package:path/path.dart' as path;
 import 'package:prompt/prompt.dart';
 
-void main(List<String> arguments) {
-  new CommandRunner('gist', 'Gist manager.')
-    ..addCommand(new Generate())
-    ..run(arguments);
+main(List<String> arguments) async {
+  try {
+    var runner = new CommandRunner('gist', 'Gist manager.')
+      ..addCommand(new Generate());
+     await runner.run(arguments);
+  } catch(e) {
+    print(e);
+  }
 }
 
 class Generate extends Command {
