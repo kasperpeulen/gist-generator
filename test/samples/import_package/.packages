@@ -1,0 +1,6 @@
+# Generate by pub on 2015-08-07 05:25:41.031.
+# This file contains a map from Dart package names to Dart package locations.
+# Dart tools, including the Dart VM and Dart analyzer, rely on the content.
+# AUTO GENERATED - DO NOT EDIT
+args:file:///Users/test/.pub-cache/hosted/pub.dartlang.org/args-0.13.2/lib/
+import_package:lib/
