@@ -26,7 +26,12 @@ class DartSample {
         _allFiles = dir.listSync(recursive: true)
           ..retainWhere((file) => file is File);
 
-  generateGist() async {
+  generateGist({bool test: false}) async {
+    if (test) {
+      await _testGist();
+      return;
+    }
+
     String pubspec = new File('${_dir.path}/pubspec.yaml').readAsStringSync();
     Map yaml = loadYaml(pubspec);
     String gistUrl = yaml['gist'];
@@ -43,6 +48,14 @@ class DartSample {
     }
   }
 
+  _testGist() async {
+    Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: false);
+    String gistUrl = gist.htmlUrl;
+    String id = gistUrl.substring(gistUrl.lastIndexOf('/') + 1);
+    String dartpadUrl = 'https://dartpad.dartlang.org/$id';
+    print('"$_dirName": dartpad for testing created at ${dartpadUrl}');
+  }
+
   String _getIdFromHomepage(String gistUrl) =>
       gistUrl.substring(gistUrl.lastIndexOf('/') + 1);
 
@@ -50,7 +63,6 @@ class DartSample {
     Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: true);
     print('"$_dirName" gist created at ${gist.htmlUrl}');
     _writeGistUrlToPubspec(gist);
-
   }
 
   _updateGist(String id) async {

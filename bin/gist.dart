@@ -25,10 +25,12 @@ class Generate extends Command {
 
   bool get verbose => argResults['verbose'];
   bool get dry_run => argResults['dry-run'];
+  bool get test_gist => argResults['test-gist'];
 
   Generate() {
     argParser.addFlag("verbose", abbr: 'v');
     argParser.addFlag("dry-run", abbr: 'n');
+    argParser.addFlag("test-gist", abbr: 't');
   }
 
   run() async {
@@ -47,7 +49,7 @@ class Generate extends Command {
 
         if (dry_run) exit(0);
 
-        await sample.generateGist();
+        await sample.generateGist(test: test_gist);
       }
     } else {
       // if there is no pubspec.yaml file in the root
@@ -58,7 +60,7 @@ class Generate extends Command {
 
       for (Directory sampleDir in dartpadAbleSamples) {
         DartSample sample = new DartSample(sampleDir);
-        await sample.generateGist();
+        await sample.generateGist(test: test_gist);
       }
     }
 
@@ -66,7 +68,9 @@ class Generate extends Command {
   }
 
   void setupGitHub() {
-    if (!dry_run) {
+    if (dry_run || test_gist) {
+      gitHub = createGitHubClient(auth: new Authentication.anonymous());
+    } else  {
       String token = askSync('Create a github token here:\n'
           'https://github.com/settings/tokens\n'
           'Github Token:');
