@@ -8,8 +8,8 @@ To activate the executable `gist`:
 pub global activate --source git https://github.com/kasperpeulen/gist-generator
 ```
 
-`gist generate` will try to create gists from all directories in the project. Here is an example of how such a project may look:
-https://github.com/kasperpeulen/dartpads
+`gist generate` will try to create gists from all directories in the project. Here is an example of how such a project may like:
+https://github.com/dart-lang/dart-tutorials-samples
 
 Only the directories that are "dartpadable" will be converted to gists. 
 This means that the directory contains a `web` directory. And that files in this directory can only be named `index.html`, `main.dart` or `styles.css`.
