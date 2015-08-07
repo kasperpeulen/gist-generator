@@ -27,6 +27,8 @@ class Generate extends Command {
   bool get dry_run => argResults['dry-run'];
   bool get test_gist => argResults['test-gist'];
 
+  String get rootPath => argResults.rest.isEmpty ? '.' : argResults.rest[0];
+
   Generate() {
     argParser.addFlag("verbose", abbr: 'v');
     argParser.addFlag("dry-run", abbr: 'n');
@@ -34,10 +36,9 @@ class Generate extends Command {
   }
 
   run() async {
-
     setupGitHub();
 
-    Directory root = new Directory('.');
+    Directory root = new Directory(rootPath);
     List<Directory> allDirectories = root.listSync(recursive: true)..retainWhere((entity) => entity is Directory);
 
     bool pubspecInRoot = new File('./pubspec.yaml').existsSync();
