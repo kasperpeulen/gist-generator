@@ -41,7 +41,7 @@ class Generate extends Command {
     Directory root = new Directory(rootPath);
     List<Directory> allDirectories = root.listSync(recursive: true)..retainWhere((entity) => entity is Directory);
 
-    bool pubspecInRoot = new File('./pubspec.yaml').existsSync();
+    bool pubspecInRoot = new File('$rootPath/pubspec.yaml').existsSync();
 
     // Generate a gist from the root if a pubspec.yaml file is in the root
     if (pubspecInRoot) {
