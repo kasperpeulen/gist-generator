@@ -13,3 +13,16 @@ https://github.com/kasperpeulen/dartpads
 
 Only the directories that are "dartpadable" will be converted to gists. 
 This means that the directory contains a `web` directory. And that files in this directory can only be named `index.html`, `main.dart` or `styles.css`.
+
+```
+$ gist generate --help
+Generate gists from the current directory.
+
+Usage: gist generate [directory]
+-h, --help         Print this usage information.
+-v, --verbose      Show extra information about why a directory is skipped.
+-n, --dry-run      Show which directories would be converted to gists.
+-t, --test-gist    Create anonymous test gist, instead of creating public gists.
+
+Run "gist help" to see global options.
+```

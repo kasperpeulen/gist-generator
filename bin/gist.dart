@@ -11,10 +11,9 @@ import 'package:prompt/prompt.dart';
 
 main(List<String> arguments) async {
   try {
-    var runner = new CommandRunner('gist', 'Gist manager.')
-      ..addCommand(new Generate());
-     await runner.run(arguments);
-  } catch(e) {
+    var runner = new CommandRunner('gist', 'Gist manager.')..addCommand(new Generate());
+    await runner.run(arguments);
+  } catch (e) {
     print(e);
   }
 }
@@ -35,9 +34,12 @@ class Generate extends Command {
   ArgParser argParser = new ArgParser(allowTrailingOptions: true);
 
   Generate() {
-    argParser.addFlag("verbose", abbr: 'v');
-    argParser.addFlag("dry-run", abbr: 'n');
-    argParser.addFlag("test-gist", abbr: 't');
+    argParser.addFlag("verbose",
+        abbr: 'v', negatable: false, help: 'Show extra information about why a directory is skipped.');
+    argParser.addFlag("dry-run",
+        abbr: 'n', negatable: false, help: 'Show which directories would be converted to gists.');
+    argParser.addFlag("test-gist",
+        abbr: 't', negatable: false, help: 'Create anonymous test gist, instead of creating public gists.');
   }
 
   run() async {
@@ -76,7 +78,7 @@ class Generate extends Command {
   void setupGitHub() {
     if (dry_run || test_gist) {
       gitHub = createGitHubClient(auth: new Authentication.anonymous());
-    } else  {
+    } else {
       String token = askSync('Create a github token here:\n'
           'https://github.com/settings/tokens\n'
           'Github Token:');
@@ -111,7 +113,7 @@ class Generate extends Command {
       return false;
     }
 
-    if (! new File('$dirName/pubspec.yaml').existsSync()) {
+    if (!new File('$dirName/pubspec.yaml').existsSync()) {
       if (verbose) {
         print('Skipping ${printDirName}: App contains no pubspec.yaml file.');
       }
