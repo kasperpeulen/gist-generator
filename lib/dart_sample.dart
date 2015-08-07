@@ -19,7 +19,7 @@ class DartSample {
     return path.relative(_dir.path);
   }
 
-  String description;
+  String _description;
 
   DartSample(Directory dir)
       : this._dir = dir,
@@ -27,6 +27,8 @@ class DartSample {
           ..retainWhere((file) => file is File);
 
   generateGist({bool test: false}) async {
+    this._description = _dirName;
+
     if (test) {
       await _testGist();
       return;
@@ -35,12 +37,7 @@ class DartSample {
     String pubspec = new File('${_dir.path}/pubspec.yaml').readAsStringSync();
     Map yaml = loadYaml(pubspec);
     String gistUrl = yaml['gist'];
-//    String description = yaml['description'];
-//    if (description != null) {
-//      this.description = description;
-//    } else {
-      this.description = _dirName;
-//    }
+
     if (gistUrl == null) {
       await _createGist();
     } else {
@@ -49,7 +46,7 @@ class DartSample {
   }
 
   _testGist() async {
-    Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: false);
+    Gist gist = await gitHub.gists.createGist(_getFiles(), description: _description, public: true);
     String gistUrl = gist.htmlUrl;
     String id = gistUrl.substring(gistUrl.lastIndexOf('/') + 1);
     String dartpadUrl = 'https://dartpad.dartlang.org/$id';
@@ -60,13 +57,13 @@ class DartSample {
       gistUrl.substring(gistUrl.lastIndexOf('/') + 1);
 
   _createGist() async {
-    Gist gist = await gitHub.gists.createGist(_getFiles(), description: description, public: true);
+    Gist gist = await gitHub.gists.createGist(_getFiles(), description: _description, public: true);
     print('"$_dirName" gist created at ${gist.htmlUrl}');
     _writeGistUrlToPubspec(gist);
   }
 
   _updateGist(String id) async {
-    Gist gist = await gitHub.gists.editGist(id, description: description, files: _getFiles());
+    Gist gist = await gitHub.gists.editGist(id, description: _description, files: _getFiles());
     print('"$_dirName" gist updated at ${gist.htmlUrl}');
   }
 
