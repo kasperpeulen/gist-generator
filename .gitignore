@@ -18,13 +18,13 @@ pubspec.lock
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion
 
 *.iml
-
+.idea/libraries/Dart_Packages.xml
 ## Directory-based project format:
 .idea/
 # if you remove the above rule, at least ignore the following:
 
 # User-specific stuff:
- .idea/libraries/
+
 # .idea/tasks.xml
 # .idea/dictionaries
 
@@ -62,6 +62,5 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 
-.idea/libraries/Dart_Packages.xml
 .idea/codeStyleSettings.xml
 .idea/dictionaries/test.xml
