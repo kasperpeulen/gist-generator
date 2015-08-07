@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:args/src/arg_parser.dart';
 import 'package:gist/analyzer.dart';
 import 'package:gist/dart_sample.dart';
 import 'package:gist/github.dart';
@@ -23,11 +24,15 @@ class Generate extends Command {
 
   String description = 'Generate gists from the current directory.';
 
+  String get invocation => "gist generate [directory]";
+
   bool get verbose => argResults['verbose'];
   bool get dry_run => argResults['dry-run'];
   bool get test_gist => argResults['test-gist'];
 
   String get rootPath => argResults.rest.isEmpty ? '.' : argResults.rest[0];
+
+  ArgParser argParser = new ArgParser(allowTrailingOptions: true);
 
   Generate() {
     argParser.addFlag("verbose", abbr: 'v');
